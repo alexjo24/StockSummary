@@ -1,0 +1,33 @@
+{% extends "base.html" %} {% block title %}Hot Section{% endblock %}
+
+{% block content %}
+<h1 align="center">Hot!</h1>
+
+<table class="table table-borderless">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Symbol</th>
+            <th scope="col">Company</th>
+            <th scope="col">Mentions</th>
+        </tr>
+    </thead>
+    <tbody>
+
+
+        {% for item in Hot_Stocks%}
+        <tr>
+
+            <td>{{item.id}}</td>
+            <td>{{item.stock_symbol}}</td>
+            <td>{{item.stock_company}}</td>
+            <td>{{item.stock_mentions}}</td>
+        </tr>
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+
+{% endblock %}
