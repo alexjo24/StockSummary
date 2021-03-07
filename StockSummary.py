@@ -5,20 +5,24 @@ from datetime import datetime
 import calendar
 import time
 import sqlite3
+import pathlib
+
 
 
 def GetTickerSymbols():
-    global nasdaq_df,nyse_df,amex_df
+    global nasdaq_df,nyse_df,amex_df, currentdir
     print("Reading in Ticker Symbols")
     #CSV of stocksymbols located in the directory of the script.
 
+    currentdir = str(pathlib.Path(__file__).parent.absolute())+"\\"
+
     fields = ['Symbol','Name']
     #NASDAQ
-    nasdaq_df = pd.read_csv('nasdaq_screener_1613033542544_NASDAQ.csv',usecols = fields)
+    nasdaq_df = pd.read_csv(currentdir+'nasdaq_screener_1613033542544_NASDAQ.csv',usecols = fields)
     #NYSE
-    nyse_df = pd.read_csv('nasdaq_screener_1613033608613_NYSE.csv', usecols = fields)
+    nyse_df = pd.read_csv(currentdir+'nasdaq_screener_1613033608613_NYSE.csv', usecols = fields)
     #AMEX
-    amex_df = pd.read_csv('nasdaq_screener_1613033634897_AMEX.csv', usecols = fields)
+    amex_df = pd.read_csv(currentdir+'nasdaq_screener_1613033634897_AMEX.csv', usecols = fields)
 
 
 #Purpose of this method is to clean the submission/comment data.
@@ -32,7 +36,7 @@ def cleanData(post):
     postText = list(filter(None,postText))
 
     #Removing typically used words to not identify them as stock symbols.
-    rm_list = ['One','one','Green','NOW','NEW','Just','At','Red', 'GO', 'ROCKET']
+    rm_list = ['One','one','Green','NOW','NEW','Just','At','Red', 'GO', 'My', 'MY', 'my']
 
     for rm_el in rm_list:
         if rm_el in postText:
@@ -40,10 +44,6 @@ def cleanData(post):
 
 
     return postText
-
-#Frequency of scraping
-def Timer():
-    pass
 
 #####Implemented different rules to avoid unneccessary searches and for identifying symbols accurately
 #
@@ -69,7 +69,7 @@ def Timer():
 #
 #    The issue with this method is that symbol stocks will be identified "wrongly". But if there is a stock trending it
 #    will be mentioned more than the wrongly identified stocks. I.e. the faulty data being picked up by the "wrongly"
-#    identified stocks will (most likely) be outnumbered by a great percentage.
+#    identified stocks will (most likely) be outnumbered by real trending stocks.
 
 def FindTickerSymbolsMatches(post):
 
@@ -138,7 +138,7 @@ def WebScrapeReddit():
     print("Daily Discussion Thread, comment section")
     print()
 
-    dailyDiscussion = subreddit.search('flair_name:"Daily Discussion"', sort='new', limit = 1)
+    dailyDiscussion = subreddit.search('flair_name:"Daily Discussion"', sort='new', limit = 10)
     ddlist = searchInComments(dailyDiscussion)
     saveToDatabase(ddlist,"dd") #Save data to database, keyword used to store data in the correct database.
 
@@ -164,10 +164,8 @@ def searchInComments(section):
     t0 = time.time()
 
     for post in section:
-        # if checkDate(post):
-        #     continue
 
-        print(post.title)
+        # print(post.title)
 
         # See https://praw.readthedocs.io/en/latest/tutorials/comments.html for more details.
         post.comments.replace_more(limit=1)
@@ -184,8 +182,8 @@ def searchInComments(section):
         # for top_level_comment in post.comments:
         #     print(top_level_comment.body,' :::: ', top_level_comment.ups)
         #     cc+=1
-    print(stockList)
-    print(len(stockList))
+    # print(stockList)
+    # print(len(stockList))
     print()
     print(50 * '#')
     print('Amount of comments: ', str(cc))
@@ -228,7 +226,7 @@ def countMentions(listOfStocks):
 
     #Obtain unique stock symbols.
     uniqueList = list(set(listOfStocks))
-    print("Unique stock symbol list: ",listOfStocks)
+    # print("Unique stock symbol list: ",listOfStocks)
 
     # Count how many times a unique stock symbol is found in the list of all the stock mentions.
     for uniqueSym in uniqueList:
@@ -244,7 +242,7 @@ def countMentions(listOfStocks):
     #Sort list in descending order in regards to amount of mentions.
     stockSummary = sorted(stockSummary, key=lambda x: int(x[2]), reverse = True)
 
-    print("Stocksummary sorted: ", stockSummary)
+    # print("Stocksummary sorted: ", stockSummary)
 
     return stockSummary
 
@@ -255,21 +253,37 @@ def saveToDatabase(listSummary,keyword):
 
     #The list of list is transformed into a dataframe. Necessary step to save webscraped data onto the database.db.
     df_stockSummary = pd.DataFrame.from_records(listSummary,columns=['stock_symbol', 'stock_company', 'stock_mentions'])
-    # df_stockSummary.insert(0, 'id', df_stockSummary.index+1)
+    
     print(df_stockSummary)
 
     try:
-        conn = sqlite3.connect('Flask_Web_App\website\database.db')  
+        conn = sqlite3.connect(currentdir+'Flask_Web_App\website\database.db')  
         c = conn.cursor()
-    except Exception as e:
-        print(e)
+        
 
+        if keyword == 'hot':
+            
+            #Deleting row data in table
+            c.execute("""DELETE from hot_stocks""")
+            conn.commit()
 
-    if keyword == 'hot':
-        df_stockSummary.to_sql('hot_stocks', conn, if_exists='append', index = False)
-    elif keyword == 'dd':
-        df_stockSummary.to_sql('dd_stocks', conn, if_exists='append', index = False)
-    
+            df_stockSummary.to_sql('hot_stocks', conn, if_exists='append', index = False)
+        elif keyword == 'dd':
+
+            #Deleting row data in table
+            c.execute("""DELETE from dd_stocks""")
+            conn.commit()
+
+            df_stockSummary.to_sql('dd_stocks', conn, if_exists='append', index = False)
+        
+
+        c.close()
+
+    except sqlite3.Error as error:
+        print(error)
+    finally:
+        if conn:
+            conn.close()
 
 
 
@@ -280,50 +294,6 @@ if __name__ == '__main__':
     WebScrapeReddit()
 
 
-############################################
-# def runDays():
-
-#     weekno = datetime.datetime.today().weekday()
-
-#     if weekno < 5:
-#         print("Weekday")
-#         print("RUNNING SCRIPT")
-#     else:
-#         print("Weekend")
-#         print("Not Running Script!")
-
-
-
-############################################
-
-
-# def checkDate(post):
-#     print(post.title)
-#     #print(str(datetime.today()).split(" ")[0].split("-"))
-
-#     year,month,day = str(datetime.today()).split(" ")[0].split("-")
-
-#     month = calendar.month_abbr[int(month)]
-
-#     print(year,month,day)
-
-#     if year in post.title and month in post.title and day in post.title:
-#         print("Date Correct")
-
-#         return True
-#     else:
-#         print("Post does not match the correct Date")
-
-#         return False
-
-
-############################################
-
-#Save stock summary to csv file
-# def saveToCSV(a):
-#     with open("data.csv", "wb") as f:
-#         writer = csv.writer(f)
-#         writer.writerows(a)
 
 ############################################
 
