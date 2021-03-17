@@ -21,6 +21,7 @@ class HotStocks(db.Model):
     stock_symbol = db.Column(db.String(10), nullable=False)
     stock_company = db.Column(db.String(150), nullable=False)
     stock_mentions = db.Column(db.Integer, nullable=False)
+    stock_date = db.Column(db.String(20), nullable=False)
 
 
 ####################### DD STOCKS TABLES ##########################
@@ -33,6 +34,7 @@ class DDStocks(db.Model):
     stock_symbol = db.Column(db.String(10), nullable=False)
     stock_company = db.Column(db.String(150), nullable=False)
     stock_mentions = db.Column(db.Integer, nullable=False)
+    stock_date = db.Column(db.String(20), nullable=False)
 
 
 class DDStocks1d(db.Model):
@@ -41,6 +43,7 @@ class DDStocks1d(db.Model):
     stock_symbol = db.Column(db.String(10), nullable=False)
     stock_company = db.Column(db.String(150), nullable=False)
     stock_mentions = db.Column(db.Integer, nullable=False)
+    stock_date = db.Column(db.String(20), nullable=False)
 
 class DDStocks2d(db.Model):
     __tablename__ = 'dd_stocks2d'
@@ -48,6 +51,7 @@ class DDStocks2d(db.Model):
     stock_symbol = db.Column(db.String(10), nullable=False)
     stock_company = db.Column(db.String(150), nullable=False)
     stock_mentions = db.Column(db.Integer, nullable=False)
+    stock_date = db.Column(db.String(20), nullable=False)
 
 class DDStocks3d(db.Model):
     __tablename__ = 'dd_stocks3d'
@@ -55,6 +59,7 @@ class DDStocks3d(db.Model):
     stock_symbol = db.Column(db.String(10), nullable=False)
     stock_company = db.Column(db.String(150), nullable=False)
     stock_mentions = db.Column(db.Integer, nullable=False)
+    stock_date = db.Column(db.String(20), nullable=False)
 
 class DDStocks4d(db.Model):
     __tablename__ = 'dd_stocks4d'
@@ -62,6 +67,7 @@ class DDStocks4d(db.Model):
     stock_symbol = db.Column(db.String(10), nullable=False)
     stock_company = db.Column(db.String(150), nullable=False)
     stock_mentions = db.Column(db.Integer, nullable=False)
+    stock_date = db.Column(db.String(20), nullable=False)
 
 class DDStocks5d(db.Model):
     __tablename__ = 'dd_stocks5d'
@@ -69,6 +75,7 @@ class DDStocks5d(db.Model):
     stock_symbol = db.Column(db.String(10), nullable=False)
     stock_company = db.Column(db.String(150), nullable=False)
     stock_mentions = db.Column(db.Integer, nullable=False)
+    stock_date = db.Column(db.String(20), nullable=False)
 
 class DDStocks6d(db.Model):
     __tablename__ = 'dd_stocks6d'
@@ -76,6 +83,7 @@ class DDStocks6d(db.Model):
     stock_symbol = db.Column(db.String(10), nullable=False)
     stock_company = db.Column(db.String(150), nullable=False)
     stock_mentions = db.Column(db.Integer, nullable=False)
+    stock_date = db.Column(db.String(20), nullable=False)
 
 class DDStocks7d(db.Model):
     __tablename__ = 'dd_stocks7d'
@@ -83,5 +91,6 @@ class DDStocks7d(db.Model):
     stock_symbol = db.Column(db.String(10), nullable=False)
     stock_company = db.Column(db.String(150), nullable=False)
     stock_mentions = db.Column(db.Integer, nullable=False)
+    stock_date = db.Column(db.String(20), nullable=False)
 
 

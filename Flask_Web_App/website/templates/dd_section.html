@@ -1,8 +1,8 @@
-{% extends "base.html" %} {% block title %}DD Section{% endblock %} {% block
-content %}
-<h1 align="center">DD!</h1>
+{% extends "base.html" %} {% block title %}DD Section{% endblock title%}
+{% block content %}
+<h2>Daily Discussion, Selection New, Most mentioned stocks.</h2>
 
-<table class="table table-borderless">
+<table class="table table-striped table-sm">
     <thead>
         <tr>
             <th scope="col">#</th>
@@ -23,4 +23,168 @@ content %}
     </tbody>
 </table>
 
-{% endblock %}
+<br />
+
+<canvas id="myChart" width="900" height="380"></canvas>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"
+    integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha"
+    crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js"
+    integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE"
+    crossorigin="anonymous"></script>
+
+
+<!-- Ref: https://stackoverflow.com/questions/64874084/how-could-i-pass-data-to-chart-js-with-flask -->
+<script>
+
+
+
+    // Graphs
+    var ctx = document.getElementById('myChart').getContext('2d');
+
+
+
+    var myChart = new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: {{ date_list | tojson }},
+    datasets: [{
+        label: {{ ls_vis_Stocks[0] | tojson }},
+        data: {{ ls_vis_values[0] | tojson }},
+        lineTension: 0,
+        backgroundColor: "transparent",
+        borderColor: "#007bff",
+        borderWidth: 2,
+        pointBackgroundColor: "#007bff",
+                    }, {
+        label: {{ ls_vis_Stocks[1] | tojson }},
+        data: {{ ls_vis_values[1] | tojson }},
+        lineTension: 0,
+        backgroundColor: "transparent",
+        borderColor: "#FF0000",
+        borderWidth: 2,
+        pointBackgroundColor: "#FF0000",
+                    },
+    {
+        label: {{ ls_vis_Stocks[2] | tojson }},
+        data: {{ ls_vis_values[2] | tojson }},
+        lineTension: 0,
+        backgroundColor: "transparent",
+        borderColor: "#00FF00",
+        borderWidth: 2,
+        pointBackgroundColor: "#00FF00",
+                    },
+    {
+        label: {{ ls_vis_Stocks[3] | tojson }},
+        data: {{ ls_vis_values[3] | tojson }},
+        lineTension: 0,
+        backgroundColor: "transparent",
+        borderColor: "#E6FF00",
+        borderWidth: 2,
+        pointBackgroundColor: "#E6FF00",
+                    },
+    {
+        label: {{ ls_vis_Stocks[4] | tojson }},
+        data: {{ ls_vis_values[4] | tojson }},
+        lineTension: 0,
+        backgroundColor: "transparent",
+        borderColor: "#FF00F7",
+        borderWidth: 2,
+        pointBackgroundColor: "#FF00F7",
+                    },
+    {
+        label: {{ ls_vis_Stocks[5] | tojson }},
+        data: {{ ls_vis_values[5] | tojson }},
+        lineTension: 0,
+        backgroundColor: "transparent",
+        borderColor: "#258D0B",
+        borderWidth: 2,
+        pointBackgroundColor: "#258D0B",
+                    },
+    {
+        label: {{ ls_vis_Stocks[6] | tojson }},
+        data: {{ ls_vis_values[6] | tojson }},
+        lineTension: 0,
+        backgroundColor: "transparent",
+        borderColor: "#8D0B0B",
+        borderWidth: 2,
+        pointBackgroundColor: "#8D0B0B",
+                    },
+    {
+        label: {{ ls_vis_Stocks[7] | tojson }},
+        data: {{ ls_vis_values[7] | tojson }},
+        lineTension: 0,
+        backgroundColor: "transparent",
+        borderColor: "#000000",
+        borderWidth: 2,
+        pointBackgroundColor: "#000000",
+                    },
+    {
+        label: {{ ls_vis_Stocks[8] | tojson }},
+        data: {{ ls_vis_values[8] | tojson }},
+        lineTension: 0,
+        backgroundColor: "transparent",
+        borderColor: "#FFCCCC",
+        borderWidth: 2,
+        pointBackgroundColor: "#FFCCCC",
+                    },
+    {
+        label: {{ ls_vis_Stocks[9] | tojson }},
+        data: {{ ls_vis_values[9] | tojson }},
+        lineTension: 0,
+        backgroundColor: "transparent",
+        borderColor: "#808080",
+        borderWidth: 2,
+        pointBackgroundColor: "#808080",
+                    }
+
+
+    ],
+            },
+    options: {
+        legend: {
+            position: 'right',
+					},
+        responsive: true,
+            title: {
+            display: true,
+                text: 'Trend from the top 10 most mentioned of today'
+        },
+        tooltips: {
+            mode: 'index',
+                intersect: false,
+				},
+        hover: {
+            mode: 'nearest',
+                intersect: true
+        },
+        scales: {
+            xAxes: [{
+                display: true,
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Day'
+                }
+            }],
+                yAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Amount of mentions'
+                    }
+                }]
+        }
+
+    }
+        });
+
+
+
+</script>
+
+{% endblock content%}

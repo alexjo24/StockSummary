@@ -8,9 +8,11 @@ DB_NAME = "database.db"
 
 def create_app():
     app = Flask(__name__)
+    app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0 #Used to not cache static assets for the browser
     app.config['SECRET_KEY'] = 'my_secret_key'
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'  #Specify storage of the database
     db.init_app(app)  #Tell the database which app we are going to use. I.e. the flask app
+    
 
     from .views import views
     from .auth import auth

@@ -1,3 +1,6 @@
+#cleanData method and FindTickerSymbolsMatches will be deleted in the future when Natural Language processing has been implemented instead.
+#I.e. the methods are temproray solutions.
+
 import praw
 from praw.models import MoreComments
 import pandas as pd
@@ -27,7 +30,6 @@ def GetTickerSymbols():
 
 #Purpose of this method is to clean the submission/comment data.
 #Remove empty elements, ','-sign, '.'-signs.
-#
 def cleanData(post):
     # Split text of post into a list & remove "," and "." signs from the list.
     postText = [y.strip(',.') for y in post.split(' ')]
@@ -36,7 +38,7 @@ def cleanData(post):
     postText = list(filter(None,postText))
 
     #Removing typically used words to not identify them as stock symbols.
-    rm_list = ['One','one','Green','NOW','NEW','Just','At','Red', 'GO', 'My', 'MY', 'my']
+    rm_list = ['One','one','Green','NOW','NEW','Just','At','Red', 'GO', 'My', 'MY', 'my', 'Good', 'Great', 'Big', 'Open']
 
     for rm_el in rm_list:
         if rm_el in postText:
@@ -67,8 +69,8 @@ def cleanData(post):
 # 4. Search for stock symbols with (" "+symbol+" ") .
 #    Limit only to 3 symbol sized stocks and only check for capital letter words.
 #
-#    The issue with this method is that symbol stocks will be identified "wrongly". But if there is a stock trending it
-#    will be mentioned more than the wrongly identified stocks. I.e. the faulty data being picked up by the "wrongly"
+#    The issue with this method is that symbol stocks will not be correctly identified. But if there is a stock trending it
+#    will be mentioned more than the wrongly identified stocks. I.e. the faulty data being picked up by the incorrectly
 #    identified stocks will (most likely) be outnumbered by real trending stocks.
 
 def FindTickerSymbolsMatches(post):
@@ -112,11 +114,32 @@ def FindTickerSymbolsMatches(post):
 
 
 
+            ############################################
+
+            # # Rule 3.
+            # for el2 in postText:
+            #     len_word = len(el2)
+            #
+            #     # Ignore 1 and 2 length symboled stocks.
+            #     # Assuming that the user writing the post want to clarify and write the entire company name when a 1 or 2 length
+            #     # symbol stock is written for clarification/understanding. E.g. F, Ford Company. Rule 1 would catch that stock.
+            #     while len_word > 2:
+            #
+            #         for id, row in nyse_df.iterrows():
+            #
+            #             if len_word == len(row.Symbol):
+            #                 #print(' inside: ', el2[:len_word], ' ::::: ', row.Symbol)
+            #                 if el2[:len_word] == row.Symbol:
+            #                     return str(row.Symbol),str(row.Name)
+            #
+            #         len_word -= 1
+
+
 def WebScrapeReddit():
-    reddit = praw.Reddit(client_id = 'insert',
-                         client_secret = 'insert',
-                         username = 'insert',
-                         password = 'insert',
+    reddit = praw.Reddit(client_id = 'INSERT',
+                         client_secret = 'INSERT',
+                         username = 'INSERT',
+                         password = 'INSERT',
                          user_agent = 'something')
 
 
@@ -158,7 +181,6 @@ def searchInComments(section):
 
     stockList = []
 
-    cc_tmp = 0
     cc = 0
 
     t0 = time.time()
@@ -168,6 +190,10 @@ def searchInComments(section):
         # print(post.title)
 
         # See https://praw.readthedocs.io/en/latest/tutorials/comments.html for more details.
+        #The limit parameter varies how many comments are loaded from the "Comment forest". 
+        #Comment forest is a tree data structure and where comments are traversed by breadth-first.
+        #So increasing the limit increases the depth of how many comments in each branch is loaded from the comment forest.
+        #--> Higher limit value = More comments.
         post.comments.replace_more(limit=1)
         for comment in post.comments.list():
             #print(comment.body)
@@ -219,14 +245,13 @@ def searchInSub(section):
 
     return listSummary
 
-#Count the amount of mentions of a stock and store mentions and respectively company in descending order.
+#Count the amount of mentions of a stock and store mentions and respectively company. Sorts in descending order.
 def countMentions(listOfStocks):
 
     stockSummary = []
 
     #Obtain unique stock symbols.
     uniqueList = list(set(listOfStocks))
-    # print("Unique stock symbol list: ",listOfStocks)
 
     # Count how many times a unique stock symbol is found in the list of all the stock mentions.
     for uniqueSym in uniqueList:
@@ -235,24 +260,26 @@ def countMentions(listOfStocks):
             if el[0] == uniqueSym[0]:
                 cc += 1
         
+        #Add a datestamp to each stock, done for visualization purposes in frontend.
+        dateToday = str(datetime.today().year)+'-'+str(datetime.today().month)+'-'+str(datetime.today().day)
 
         #Add mentions and stock information in a summary list.
-        stockSummary.append([uniqueSym[0], uniqueSym[1], cc])
+        stockSummary.append([uniqueSym[0], uniqueSym[1], cc, dateToday])
+
 
     #Sort list in descending order in regards to amount of mentions.
     stockSummary = sorted(stockSummary, key=lambda x: int(x[2]), reverse = True)
 
-    # print("Stocksummary sorted: ", stockSummary)
 
     return stockSummary
 
 
 
 #Store summary of stock mentions, list of lists format, in database.db which is created through the flask web app.
-def saveToDatabase(listSummary,keyword):
+def saveToDatabase(listSummary, keyword):
 
     #The list of list is transformed into a dataframe. Necessary step to save webscraped data onto the database.db.
-    df_stockSummary = pd.DataFrame.from_records(listSummary,columns=['stock_symbol', 'stock_company', 'stock_mentions'])
+    df_stockSummary = pd.DataFrame.from_records(listSummary,columns=['stock_symbol', 'stock_company', 'stock_mentions', 'stock_date'])
     
     print(df_stockSummary)
 
@@ -295,22 +322,3 @@ if __name__ == '__main__':
 
 
 
-############################################
-
-# # Rule 3.
-# for el2 in postText:
-#     len_word = len(el2)
-#
-#     # Ignore 1 and 2 length symboled stocks.
-#     # Assuming that the user writing the post want to clarify and write the entire company name when a 1 or 2 length
-#     # symbol stock is written for clarification/understanding. E.g. F, Ford Company. Rule 1 would catch that stock.
-#     while len_word > 2:
-#
-#         for id, row in nyse_df.iterrows():
-#
-#             if len_word == len(row.Symbol):
-#                 #print(' inside: ', el2[:len_word], ' ::::: ', row.Symbol)
-#                 if el2[:len_word] == row.Symbol:
-#                     return str(row.Symbol),str(row.Name)
-#
-#         len_word -= 1

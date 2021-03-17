@@ -32,7 +32,7 @@ def updateTables():
 
                 try:
                     #The data in the current table is deleted and then data from the next table is copied into the current table.
-                    c.execute("DELETE from " + current_table)
+                    c.execute("DELETE FROM " + current_table)
                     conn.commit()
 
                     c.execute("INSERT INTO " + current_table + " SELECT * FROM " + next_table)
@@ -41,7 +41,6 @@ def updateTables():
                 except sqlite3.Error as e:
                     print(e)
 
-        
 
         c.close()
 
