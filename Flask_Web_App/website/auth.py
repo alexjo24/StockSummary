@@ -31,17 +31,22 @@ def login():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('auth.login'))
+    #return redirect(url_for('auth.login'))
+    return redirect(url_for('views.home')) #When a user is created redirect the user to the home page.
 
 @auth.route('/sign-up', methods = ['GET', 'POST'])
 def sign_up():
     if request.method == 'POST':
         email = request.form.get('email')
         userName = request.form.get('userName')
+        phonenumber = request.form.get('phonenumber')
         password1 = request.form.get('password1')
         password2 = request.form.get('password2')
 
         user = User.query.filter_by(email=email).first()
+
+        phonenumberCheck = User.query.filter_by(phonenumber=phonenumber).first()
+        
 
         if user:
             flash('Email already exist.', category='error')
@@ -51,10 +56,16 @@ def sign_up():
             flash('userName must be greater than 1 character.', category='error')
         elif password1 != password2:
             flash('Password don\'t match.', category='error')
-        elif len(password1) < 7:
+        elif len(password1) < 6:
             flash('Password must be atleast 6 characters long', category='error')
+        elif phonenumberCheck:
+            flash('Phonenumber is already connected to an account.', category='error')
+        elif len(phonenumber) < 10:
+            flash('A non valid phonenumber was entered, please try again', category='error')
+        elif '+' not in phonenumber:
+            flash('Phonenumber must include landcode including "+"-sign.', category='error')
         else:
-            new_user = User(email=email, userName=userName, password=generate_password_hash(password1,method='sha256'))  # sha256 hashing algorithm used for the hash func, for the password
+            new_user = User(email=email, userName=userName, password=generate_password_hash(password1,method='sha256'), phonenumber=phonenumber)  # sha256 hashing algorithm used for the hash func, for the password
             db.session.add(new_user)
             db.session.commit()
             login_user(new_user, remember = True)

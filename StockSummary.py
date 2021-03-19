@@ -30,6 +30,7 @@ def GetTickerSymbols():
 
 #Purpose of this method is to clean the submission/comment data.
 #Remove empty elements, ','-sign, '.'-signs.
+#
 def cleanData(post):
     # Split text of post into a list & remove "," and "." signs from the list.
     postText = [y.strip(',.') for y in post.split(' ')]

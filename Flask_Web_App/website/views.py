@@ -1,8 +1,7 @@
-from flask import Blueprint, render_template, request, flash, jsonify
+from flask import Blueprint, render_template, request, flash
 from flask_login import login_required, current_user
 from .models import *
 from . import db
-#import json
 from collections import defaultdict
 
 views = Blueprint('views', __name__)
@@ -36,7 +35,11 @@ def dd():
                                                             # ls_vis_Stocks: the top ten stocks symbols. (String)
                                                             # ls_vis_value: the stock symbol respective stock mentions for the last week. (Int)
                                                             # date_list: respective dates in the order which matches the when a stock mention was webscraped. (String)
+
     return render_template("dd_section.html", DD_Stocks=DD_Stocks, user=current_user, ls_vis_Stocks=ls_vis_Stocks, ls_vis_values=ls_vis_values, date_list=date_list)
+
+        
+
 
 #Convert database table data to lists. This is to enable visualization with chart.js.
 #This code was altered many times to be able to get the data to the .html page.
@@ -99,4 +102,5 @@ def getStockSymbols(dd_list):
                 value_list.append([])
 
     return stockSymbol_list, value_list
+
 

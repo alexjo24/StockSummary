@@ -1,32 +1,38 @@
-{% extends "base.html" %} {% block title %}DD Section{% endblock title%}
-{% block content %}
+{% extends "base.html" %} {% block title %}DD Section{% endblock title%} {%
+block content %}
 <h2>Daily Discussion, Selection New, Most mentioned stocks.</h2>
 
-<table class="table table-striped table-sm">
-    <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Symbol</th>
-            <th scope="col">Company</th>
-            <th scope="col">Mentions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for item in DD_Stocks%}
-        <tr>
-            <td>{{item.id}}</td>
-            <td>{{item.stock_symbol}}</td>
-            <td>{{item.stock_company}}</td>
-            <td>{{item.stock_mentions}}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="container">
+    <div class="row">
+        <div class="col-sm">
+            <table class="table table-striped table-hover table-sm w-auto small">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Symbol</th>
+                        <th scope="col">Company</th>
+                        <th scope="col">Mentions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in DD_Stocks%}
+                    <tr>
+                        <td>{{item.id}}</td>
+                        <td>{{item.stock_symbol}}</td>
+                        <td>{{item.stock_company}}</td>
+                        <td>{{item.stock_mentions}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-sm">
+            <canvas id="myChart" width="600" height="500"></canvas>
+        </div>
+    </div>
+</div>
 
 <br />
-
-<canvas id="myChart" width="900" height="380"></canvas>
-
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"
     integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha"
@@ -37,7 +43,6 @@
 <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js"
     integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE"
     crossorigin="anonymous"></script>
-
 
 <!-- Ref: https://stackoverflow.com/questions/64874084/how-could-i-pass-data-to-chart-js-with-flask -->
 <script>
@@ -61,7 +66,7 @@
         borderColor: "#007bff",
         borderWidth: 2,
         pointBackgroundColor: "#007bff",
-                    }, {
+                  }, {
         label: {{ ls_vis_Stocks[1] | tojson }},
         data: {{ ls_vis_values[1] | tojson }},
         lineTension: 0,
@@ -69,7 +74,7 @@
         borderColor: "#FF0000",
         borderWidth: 2,
         pointBackgroundColor: "#FF0000",
-                    },
+                  },
     {
         label: {{ ls_vis_Stocks[2] | tojson }},
         data: {{ ls_vis_values[2] | tojson }},
@@ -78,7 +83,7 @@
         borderColor: "#00FF00",
         borderWidth: 2,
         pointBackgroundColor: "#00FF00",
-                    },
+                  },
     {
         label: {{ ls_vis_Stocks[3] | tojson }},
         data: {{ ls_vis_values[3] | tojson }},
@@ -87,7 +92,7 @@
         borderColor: "#E6FF00",
         borderWidth: 2,
         pointBackgroundColor: "#E6FF00",
-                    },
+                  },
     {
         label: {{ ls_vis_Stocks[4] | tojson }},
         data: {{ ls_vis_values[4] | tojson }},
@@ -96,7 +101,7 @@
         borderColor: "#FF00F7",
         borderWidth: 2,
         pointBackgroundColor: "#FF00F7",
-                    },
+                  },
     {
         label: {{ ls_vis_Stocks[5] | tojson }},
         data: {{ ls_vis_values[5] | tojson }},
@@ -105,7 +110,7 @@
         borderColor: "#258D0B",
         borderWidth: 2,
         pointBackgroundColor: "#258D0B",
-                    },
+                  },
     {
         label: {{ ls_vis_Stocks[6] | tojson }},
         data: {{ ls_vis_values[6] | tojson }},
@@ -114,7 +119,7 @@
         borderColor: "#8D0B0B",
         borderWidth: 2,
         pointBackgroundColor: "#8D0B0B",
-                    },
+                  },
     {
         label: {{ ls_vis_Stocks[7] | tojson }},
         data: {{ ls_vis_values[7] | tojson }},
@@ -123,7 +128,7 @@
         borderColor: "#000000",
         borderWidth: 2,
         pointBackgroundColor: "#000000",
-                    },
+                  },
     {
         label: {{ ls_vis_Stocks[8] | tojson }},
         data: {{ ls_vis_values[8] | tojson }},
@@ -132,7 +137,7 @@
         borderColor: "#FFCCCC",
         borderWidth: 2,
         pointBackgroundColor: "#FFCCCC",
-                    },
+                  },
     {
         label: {{ ls_vis_Stocks[9] | tojson }},
         data: {{ ls_vis_values[9] | tojson }},
@@ -141,15 +146,15 @@
         borderColor: "#808080",
         borderWidth: 2,
         pointBackgroundColor: "#808080",
-                    }
+                  }
 
 
     ],
-            },
+          },
     options: {
         legend: {
             position: 'right',
-					},
+  	},
         responsive: true,
             title: {
             display: true,
@@ -158,7 +163,7 @@
         tooltips: {
             mode: 'index',
                 intersect: false,
-				},
+  },
         hover: {
             mode: 'nearest',
                 intersect: true
@@ -181,10 +186,7 @@
         }
 
     }
-        });
-
-
-
+      });
 </script>
 
 {% endblock content%}
