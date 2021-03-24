@@ -86,8 +86,6 @@ def dbToList():
     ls_vis_Stocks = list(dict_mentions.keys())
     ls_vis_values = list(dict_mentions.values())
 
-    print("YO: ",ls_vis_Stocks)
-    print("LO: ", ls_vis_values)
     ls_vis_Stocks,ls_vis_values = sortStockLists(ls_vis_Stocks,ls_vis_values)
     # sortStockLists(ls_vis_Stocks,ls_vis_values)
 
@@ -102,19 +100,15 @@ def sortStockLists(stock_symbols,values):
 
     for i in range(len(values)):
         values[i].append(stock_symbols[i])
-
-    print("lo:", values[:2])
     
     values.sort(key=lambda x: x[-2], reverse=True)
-    print("yo:", values[:2])
 
     stock_symbols = []
     for j in range(len(values)):
         stock_symbols.append(values[j][-1])
         del values[j][-1]
 
-    print("yo:", values[:2])
-    print("stonks:", stock_symbols)
+
     return stock_symbols,values
 
 #Get a list of all stock symbols that has been on the top ten latest week.
